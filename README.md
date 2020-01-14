@@ -19,7 +19,7 @@ We only want to send alerts from a posting once. If our script detects a keyword
 The main function will be called check_cl
 
 #### 1.
-I'll create the first function which takes the source code and outputs a list of raw entries. The raw entries will also be source code but it only contain the information on one posting.
+I'll create the first function which takes the source code and outputs a list of raw entries. The raw entries will also be source code but will only contain the information of one posting.
 
 #### 2.
 You will then create a function that takes the raw entries and cleans them up, resulting in a data structure that has the title of the posting and the link to the posting.
