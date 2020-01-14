@@ -5,7 +5,7 @@ Create a python script that we can run continuously (every ~30 minutes) on Raspb
 
 ### Inputs: 
 * craigslist url: 'http.url.com'
-* list of keyword(s): 'crashpad', 'crash pad', 'bouldering pad']
+* list of keyword(s): ['crashpad', 'crash pad', 'bouldering pad']
 * list of email(s) to send alerts to: ['dan@email.com', 'alon@email.com']
 
 ### Notes:
