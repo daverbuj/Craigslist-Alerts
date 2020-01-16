@@ -27,19 +27,45 @@ def get_raw_entries(url):
 
 # FOR ALON TO DO
 def get_clean_entries(raw_entries):
-    clean_entries = # data structure of your choosing which will work well for our needs
-    # code here...
+    clean_entries = []
+    for entry in raw_entries:
+        # location
+        if 'result-hood' not in entry:
+            location = 'Unknown'
+        else:
+            loc_start = entry.find('result-hood')+15
+            loc_end = entry.find(')</span>')
+            location = entry[ loc_start : loc_end]
+        #title
+        title_start = entry.find('hdrlnk') + 8
+        pre_title = entry[title_start:loc_start-15]
+        title_end = entry[title_start:loc_start-15].find('</a>')
+        title = pre_title[ : title_end ]
+        # link
+        link_start = entry.find('https')
+        link_end = entry.find('.html') + 5
+        link = entry[ link_start : link_end ]
+        # price
+        price_start = entry.rfind('result-price')+14
+        pre_price = entry[price_start:loc_start]
+        price_end = pre_price.find('</span>')
+        price = pre_price[ : price_end ]
+        if price == '': price = 'Not Listed'
+        # appending
+        listing = (title.upper(), link, price, location.upper())
+        clean_entries.append(listing)
     return clean_entries
-    
 
-
-
+get_clean_entries(get_raw_entries(url))
 
 #########################################################
 # MAIN   MAIN   MAIN   MAIN   MAIN   MAIN   MAIN   MAIN #
 #########################################################
 
 # This is the final function that the rasperry pi will run
-def check_cl(url, keywords, emails):
+def check_cl(url):#, keywords, emails):
     raw_entries = get_raw_entries(url)
-    # clean_entries = get_clean_entries(raw_entries)       < this is where your code will fit in once you finish it
+    clean_entries = get_clean_entries(raw_entries)
+    return clean_entries
+
+c=check_cl(url)
