@@ -1,7 +1,12 @@
+#import urllib.request python 3
 import urllib.request
+import smtplib
+from os import listdir, getcwd
+from os.path import isfile, join
 
-url = 'https://sandiego.craigslist.org/search/sss?excats=7-13-22-2-24-1-4-19-2-1-1-1-1-9-10-1-1-1-2-2-8-1-1-1-1-1-4-1-3-1-3-1-1-1-1-7-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-2-1-1-1-1-1-2-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-2-1&postedToday=1&search_distance=25&postal=92130'
-
+#################################################
+# FUNCTIONS   FUNCTIONS   FUNCTIONS   FUNCTIONS #
+#################################################
 def get_next_entry(src):
     entry_start = src.find('<li class=')
     entry_end = src.find('</li>') +5
@@ -11,6 +16,7 @@ def get_next_entry(src):
 
 def get_raw_entries(url):
     # read in the url's source code
+    #file = urllib.request.urlopen(url)
     file = urllib.request.urlopen(url)
     # convert it to a string instead of bytes
     all_src = str(file.read())
@@ -56,16 +62,62 @@ def get_clean_entries(raw_entries):
         clean_entries.append(listing)
     return clean_entries
 
-get_clean_entries(get_raw_entries(url))
+def find_novel(clean_entries, keywords, emailed_list):
+    email = []
+    for listing in clean_entries:
+        for keyword in keywords:
+           # print(already_sent)
+            if keyword.upper() in listing[0] and listing[1] not in emailed_list:
+                email.append(listing)
+    return email
 
 #########################################################
 # MAIN   MAIN   MAIN   MAIN   MAIN   MAIN   MAIN   MAIN #
 #########################################################
 
 # This is the final function that the rasperry pi will run
-def check_cl(url):#, keywords, emails):
+def check_cl(url, keywords, emails):
+    # making a file if none exist
+    files = [f for f in listdir(getcwd()) if isfile(join(getcwd(), f))]
+    if 'already_sent.txt' not in files:
+        file = open('already_sent.txt', 'w')
+        emailed_list = []
+    # appending to the file if it does exist
+    else:
+        reading = open('already_sent.txt')
+        emailed = reading.read()
+        emailed_list = emailed[:-1].split(',')
+        reading.close()
+        file = open('already_sent.txt', 'a')
+    # turning the listing we have already seen into a list
     raw_entries = get_raw_entries(url)
     clean_entries = get_clean_entries(raw_entries)
-    return clean_entries
+    to_email = find_novel(clean_entries, keywords, emailed_list)
+    for i in to_email:
+        file.write('{},'.format(i[1]))
+    file.close()
+    # use the to_email list and email new postings to list of emails provided
+    if to_email:
+        if len(to_email) == 1: title = keywords[0]
+        else: title = keywords[0] + 's'
+        content = """Subject: New {0} just posted on Craigslist!
 
-c=check_cl(url)
+Here is the information:
+
+""".format(title)
+        for posting in to_email:
+            content += "Title: {}\nPrice: {}\nLocation: {}\nLink: {} \n\n".format(posting[0], posting[2], posting[3], posting[1])
+
+        for email in emails:
+            mail = smtplib.SMTP('smtp.gmail.com',587)
+            mail.ehlo()
+            mail.starttls()
+            mail.login('daverbuj1@gmail.com','password-here')
+            mail.sendmail('daverbuj1@gmail.com', email, content)
+            mail.close()
+
+####################
+# SCRIPT RUNS HERE #
+####################
+url = 'https://sandiego.craigslist.org/search/sss?excats=7-13-22-2-24-1-4-19-2-1-1-1-1-9-10-1-1-1-2-2-8-1-1-1-1-1-4-1-3-1-3-1-1-1-1-7-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-2-1-1-1-1-1-2-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-2-1&postedToday=1&search_distance=50&postal=92130'
+check_cl(url, ['crash pad', 'crashpad', 'crash-pad', 'boulder pad', 'bouldering pad', 'climbing pad'], ['dan@mail.com', 'alon@mail.com'])
