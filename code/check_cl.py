@@ -113,7 +113,7 @@ Here is the information:
             mail = smtplib.SMTP('smtp.gmail.com',587)
             mail.ehlo()
             mail.starttls()
-            mail.login('daverbuj1@gmail.com','l0ts0m41l')
+            mail.login('username here','password here')
             mail.sendmail('daverbuj1@gmail.com', email, content)
             mail.close()
 
