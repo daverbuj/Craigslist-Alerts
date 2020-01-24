@@ -15,7 +15,7 @@ So, Below is the url we will be using for crash pads:
 
 https://sandiego.craigslist.org/search/sss?excats=7-13-22-2-24-1-4-19-2-1-1-1-1-9-10-1-1-1-2-2-8-1-1-1-1-1-4-1-3-1-3-1-1-1-1-7-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-2-1-1-1-1-1-2-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-2-1&postedToday=1&search_distance=25&postal=92130
 
-### CRON
+### CRON:
 Using Raspberry Pi's Cron job scheduler, create a new job that will run the program every minute
 
 Edit the Cron scheduler
